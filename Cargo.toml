@@ -1,0 +1,19 @@
+[package]
+name = "v8bam"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "v8bam"
+path = "src/lib.rs"
+
+[[bin]]
+name = "v8bam"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+rust-htslib = {version = "0.51", features=["static", "libdeflate"]}
+v8 = "142.2.0"
+
