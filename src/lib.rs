@@ -422,11 +422,11 @@ fn aux_to_js_value<'s, 'i>(
         Aux::String(s) => v8::String::new(scope, s).unwrap().into(),
         Aux::HexByteArray(hex_view) => {
             // HexByteArray is already a hex-encoded string view
-            v8::String::new(scope, hex_view.as_ref()).unwrap().into()
+            v8::String::new(scope, hex_view).unwrap().into()
         }
         // Array types - return as JS arrays
         Aux::ArrayI8(arr) => {
-            let js_arr = v8::Array::new(scope, arr.iter().count() as i32);
+            let js_arr = v8::Array::new(scope, arr.len() as i32);
             for (i, v) in arr.iter().enumerate() {
                 let js_v = v8::Integer::new(scope, v as i32);
                 js_arr.set_index(scope, i as u32, js_v.into());
@@ -434,7 +434,7 @@ fn aux_to_js_value<'s, 'i>(
             js_arr.into()
         }
         Aux::ArrayU8(arr) => {
-            let js_arr = v8::Array::new(scope, arr.iter().count() as i32);
+            let js_arr = v8::Array::new(scope, arr.len() as i32);
             for (i, v) in arr.iter().enumerate() {
                 let js_v = v8::Integer::new_from_unsigned(scope, v as u32);
                 js_arr.set_index(scope, i as u32, js_v.into());
@@ -442,7 +442,7 @@ fn aux_to_js_value<'s, 'i>(
             js_arr.into()
         }
         Aux::ArrayI16(arr) => {
-            let js_arr = v8::Array::new(scope, arr.iter().count() as i32);
+            let js_arr = v8::Array::new(scope, arr.len() as i32);
             for (i, v) in arr.iter().enumerate() {
                 let js_v = v8::Integer::new(scope, v as i32);
                 js_arr.set_index(scope, i as u32, js_v.into());
@@ -450,7 +450,7 @@ fn aux_to_js_value<'s, 'i>(
             js_arr.into()
         }
         Aux::ArrayU16(arr) => {
-            let js_arr = v8::Array::new(scope, arr.iter().count() as i32);
+            let js_arr = v8::Array::new(scope, arr.len() as i32);
             for (i, v) in arr.iter().enumerate() {
                 let js_v = v8::Integer::new_from_unsigned(scope, v as u32);
                 js_arr.set_index(scope, i as u32, js_v.into());
@@ -458,7 +458,7 @@ fn aux_to_js_value<'s, 'i>(
             js_arr.into()
         }
         Aux::ArrayI32(arr) => {
-            let js_arr = v8::Array::new(scope, arr.iter().count() as i32);
+            let js_arr = v8::Array::new(scope, arr.len() as i32);
             for (i, v) in arr.iter().enumerate() {
                 let js_v = v8::Integer::new(scope, v);
                 js_arr.set_index(scope, i as u32, js_v.into());
@@ -466,7 +466,7 @@ fn aux_to_js_value<'s, 'i>(
             js_arr.into()
         }
         Aux::ArrayU32(arr) => {
-            let js_arr = v8::Array::new(scope, arr.iter().count() as i32);
+            let js_arr = v8::Array::new(scope, arr.len() as i32);
             for (i, v) in arr.iter().enumerate() {
                 let js_v = v8::Integer::new_from_unsigned(scope, v);
                 js_arr.set_index(scope, i as u32, js_v.into());
@@ -474,7 +474,7 @@ fn aux_to_js_value<'s, 'i>(
             js_arr.into()
         }
         Aux::ArrayFloat(arr) => {
-            let js_arr = v8::Array::new(scope, arr.iter().count() as i32);
+            let js_arr = v8::Array::new(scope, arr.len() as i32);
             for (i, v) in arr.iter().enumerate() {
                 let js_v = v8::Number::new(scope, v as f64);
                 js_arr.set_index(scope, i as u32, js_v.into());
