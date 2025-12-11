@@ -16,4 +16,6 @@ anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 rust-htslib = {version = "0.51", features=["static", "libdeflate"]}
 v8 = "142.2.0"
+log = "0.4"
+env_logger = "0.11"
 

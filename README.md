@@ -1,6 +1,6 @@
 # v8bam
 
-This is an experiment with using v8 as a scripting engine. It is more complex than embedding, e.g. lua, but it has great performance (uses v8) and familiar syntax. This has minimal coverage of bam record attributes, but more are easily added.
+This is an experiment with using v8 as a scripting engine. It is more complex than embedding, e.g. lua, but it has great performance and familiar syntax. This has minimal coverage of bam record attributes, but more are easily added.
 
 Rust + V8 bridge to filter BAM/CRAM alignments with JavaScript. A single V8 isolate hosts a reusable `aln` object that is refreshed per record so you can run fast, user-supplied filters.
 

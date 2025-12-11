@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use anyhow::{Context, Result};
 use clap::Parser;
+use log::info;
 use rust_htslib::bam;
 use rust_htslib::bam::Read;
 use rust_htslib::tpool::ThreadPool;
@@ -30,6 +31,7 @@ struct Args {
 }
 
 fn main() -> Result<()> {
+    env_logger::init();
     let args = Args::parse();
 
     // Create shared threadpool for BAM I/O
@@ -60,11 +62,43 @@ fn main() -> Result<()> {
     // Reuse record buffer
     let mut record = bam::Record::new();
 
+    let mut records_read = 0;
+    let mut records_written = 0;
+
     loop {
         match reader.read(&mut record) {
             Some(Ok(())) => {
+                records_read += 1;
+
+                // Log progress at intervals
+                let log_message = match records_read {
+                    10_000 => Some("10,000".to_string()),
+                    100_000 => Some("100,000".to_string()),
+                    1_000_000 => Some("1M".to_string()),
+                    _ => {
+                        if records_read % 5_000_000 == 0 {
+                            Some(format!("{}M", records_read / 1_000_000))
+                        } else {
+                            None
+                        }
+                    }
+                };
+
+                if let Some(count_str) = log_message {
+                    let percent = if records_read > 0 {
+                        (records_written as f64 / records_read as f64) * 100.0
+                    } else {
+                        0.0
+                    };
+                    info!(
+                        "Processed {} records, {:.2}% passed the filter",
+                        count_str, percent
+                    );
+                }
+
                 if engine.record_passes(&record, &header_view)? {
                     writer.write(&record)?;
+                    records_written += 1;
                 }
             }
             Some(Err(e)) => return Err(e.into()),
@@ -72,5 +106,11 @@ fn main() -> Result<()> {
         }
     }
 
+    info!(
+        "Finished processing: {} reads, {} passed the filter ({:.2}%)",
+        records_read,
+        records_written,
+        (records_written as f64 / records_read.max(1) as f64 * 100.0).round()
+    );
     Ok(())
 }
